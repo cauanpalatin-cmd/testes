@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Heart, CircleCheck as CheckCircle2, Bell, Navigation, MapPin, Clock, Globe, Calendar, Sparkles, Star, ExternalLink, Info } from 'lucide-react';
+import { X, Heart, CheckCircle2, Bell, Navigation, MapPin, Clock, Globe, Calendar, Sparkles, Star, ExternalLink, Info } from 'lucide-react';
 import type { CulturalEvent, UserLocation } from '@/types';
 import {
   formatDistance,
