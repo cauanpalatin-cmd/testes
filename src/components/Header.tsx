@@ -53,9 +53,6 @@ export default function Header({
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent)] text-white">
             <Map size={20} />
           </div>
-          <span className="hidden text-lg font-bold text-[var(--text-primary)] sm:block">
-            EventFlow
-          </span>
         </button>
 
         <div className="relative mx-auto hidden max-w-md flex-1 md:block">

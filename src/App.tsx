@@ -25,6 +25,7 @@ import FavoritesView from '@/components/FavoritesView';
 import CalendarView from '@/components/CalendarView';
 import DataView from '@/components/DataView';
 import AccessibilityView from '@/components/AccessibilityView';
+import ChatAssistant from '@/components/ChatAssistant';
 
 function AppContent() {
   const { user } = useAuth();
@@ -378,6 +379,8 @@ function AppContent() {
       />
 
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+
+      <ChatAssistant events={events} />
     </div>
   );
 }
