@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Mail, Lock, User as UserIcon, Sparkles } from 'lucide-react';
+import { X, Mail, Lock, Map } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface AuthModalProps {
@@ -34,43 +34,43 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in" onClick={onClose}>
       <div
-        className="hc-card relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl animate-scale-in"
+        className="relative w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6 shadow-2xl animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} className="absolute right-4 top-4 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
+        <button onClick={onClose} className="absolute right-4 top-4 rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]">
           <X size={20} />
         </button>
 
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-500 text-white">
-            <Sparkles size={28} />
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent)] text-white">
+            <Map size={28} />
           </div>
-          <h2 className="hc-text text-xl font-bold text-slate-900">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {mode === 'signin' ? 'Entrar na sua conta' : 'Criar uma conta'}
           </h2>
-          <p className="hc-muted mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             {mode === 'signin'
               ? 'Acesse para favoritar, criar eventos e receber lembretes'
-              : 'Junte-se para aproveitar todos os recursos personalizados'}
+              : 'Junte-se para aproveitar todos os recursos'}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="relative">
-            <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="E-mail"
-              className="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-3 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-3 pl-10 pr-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none focus:border-[var(--accent)]"
             />
           </div>
           <div className="relative">
-            <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               type="password"
               required
@@ -78,31 +78,31 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Senha"
-              className="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-3 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-3 pl-10 pr-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none focus:border-[var(--accent)]"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600">{error}</div>
+            <div className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-400">{error}</div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:opacity-50"
+            className="w-full rounded-xl bg-[var(--accent)] py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-50"
           >
             {loading ? 'Carregando...' : mode === 'signin' ? 'Entrar' : 'Criar conta'}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-slate-500">
+        <p className="mt-4 text-center text-sm text-[var(--text-secondary)]">
           {mode === 'signin' ? 'Não tem conta?' : 'Já tem conta?'}{' '}
           <button
             onClick={() => {
               setMode(mode === 'signin' ? 'signup' : 'signin');
               setError(null);
             }}
-            className="font-semibold text-sky-600 hover:underline"
+            className="font-semibold text-[var(--accent)] hover:underline"
           >
             {mode === 'signin' ? 'Criar agora' : 'Entrar'}
           </button>

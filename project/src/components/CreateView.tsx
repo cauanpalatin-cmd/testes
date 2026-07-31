@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { PlusCircle, ImagePlus, X, Globe, MapPin, Check } from 'lucide-react';
+import { CirclePlus as PlusCircle, ImagePlus, X, Globe, MapPin, Check } from 'lucide-react';
 import type { EventCategory } from '@/types';
 import { CATEGORIES, CATEGORY_ICONS } from '@/types';
 import * as Icons from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
 interface CreateViewProps {
@@ -12,7 +11,6 @@ interface CreateViewProps {
 }
 
 export default function CreateView({ onCreated }: CreateViewProps) {
-  const { user } = useAuth();
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -102,71 +100,51 @@ export default function CreateView({ onCreated }: CreateViewProps) {
     }
   };
 
+  const inputClass = 'w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none focus:border-[var(--accent)]';
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-500 text-white">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--accent)] text-white">
           <PlusCircle size={24} />
         </div>
         <div>
-          <h1 className="hc-text text-2xl font-bold text-slate-900">Cadastrar atividade</h1>
-          <p className="hc-muted text-sm text-slate-500">Compartilhe um evento cultural com a comunidade</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Cadastrar atividade</h1>
+          <p className="text-sm text-[var(--text-secondary)]">Compartilhe um evento cultural com a comunidade</p>
         </div>
       </div>
 
       {success && (
-        <div className="mb-5 flex items-center gap-2 rounded-xl bg-emerald-50 p-4 text-emerald-700 animate-slide-up">
+        <div className="mb-5 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400 animate-slide-up">
           <Check size={20} />
-          <span className="text-sm font-medium">
-            Atividade enviada! Ela passará por uma aprovação rápida e aparecerá no mapa.
-          </span>
+          <span className="text-sm font-medium">Atividade enviada! Ela passará por aprovação e aparecerá no mapa.</span>
         </div>
       )}
 
       {error && (
-        <div className="mb-5 rounded-xl bg-rose-50 p-4 text-sm text-rose-600">{error}</div>
+        <div className="mb-5 rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-400">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="hc-card space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Nome do evento *</label>
-          <input
-            required
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder="Ex.: Festival de Música Independente"
-            className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-          />
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Nome do evento *</label>
+          <input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Ex.: Festival de Música Independente" className={inputClass} />
         </div>
 
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Descrição *</label>
-          <textarea
-            required
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            placeholder="Conte um pouco sobre a atividade..."
-            rows={3}
-            className="w-full resize-none rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-          />
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Descrição *</label>
+          <textarea required value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Conte um pouco sobre a atividade..." rows={3} className={cn(inputClass, 'resize-none')} />
         </div>
 
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Categoria *</label>
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Categoria *</label>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => {
               const Icon = Icons[CATEGORY_ICONS[cat] as keyof typeof Icons] as Icons.LucideIcon | undefined;
               const active = form.category === cat;
               return (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setForm({ ...form, category: cat })}
-                  className={cn(
-                    'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all',
-                    active ? 'border-sky-500 bg-sky-50 text-sky-600' : 'border-slate-200 text-slate-600 hover:border-slate-300'
-                  )}
-                >
+                <button key={cat} type="button" onClick={() => setForm({ ...form, category: cat })}
+                  className={cn('flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all', active ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]' : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-muted)]')}>
                   {Icon && <Icon size={13} />}
                   {cat}
                 </button>
@@ -176,38 +154,19 @@ export default function CreateView({ onCreated }: CreateViewProps) {
         </div>
 
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Organizador *</label>
-          <input
-            required
-            value={form.organizer_name}
-            onChange={(e) => setForm({ ...form, organizer_name: e.target.value })}
-            placeholder="Nome do responsável ou grupo"
-            className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-          />
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Organizador *</label>
+          <input required value={form.organizer_name} onChange={(e) => setForm({ ...form, organizer_name: e.target.value })} placeholder="Nome do responsável ou grupo" className={inputClass} />
         </div>
 
-        {/* Mode toggle */}
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Modalidade</label>
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Modalidade</label>
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, is_virtual: false })}
-              className={cn(
-                'flex flex-1 items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-all',
-                !form.is_virtual ? 'border-sky-500 bg-sky-50 text-sky-600' : 'border-slate-200 text-slate-600'
-              )}
-            >
+            <button type="button" onClick={() => setForm({ ...form, is_virtual: false })}
+              className={cn('flex flex-1 items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-all', !form.is_virtual ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]' : 'border-[var(--border)] text-[var(--text-secondary)]')}>
               <MapPin size={16} /> Presencial
             </button>
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, is_virtual: true })}
-              className={cn(
-                'flex flex-1 items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-all',
-                form.is_virtual ? 'border-sky-500 bg-sky-50 text-sky-600' : 'border-slate-200 text-slate-600'
-              )}
-            >
+            <button type="button" onClick={() => setForm({ ...form, is_virtual: true })}
+              className={cn('flex flex-1 items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-all', form.is_virtual ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]' : 'border-[var(--border)] text-[var(--text-secondary)]')}>
               <Globe size={16} /> Virtual
             </button>
           </div>
@@ -215,132 +174,66 @@ export default function CreateView({ onCreated }: CreateViewProps) {
 
         {form.is_virtual ? (
           <div>
-            <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Link da transmissão</label>
-            <input
-              value={form.virtual_link}
-              onChange={(e) => setForm({ ...form, virtual_link: e.target.value })}
-              placeholder="https://..."
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            />
+            <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Link da transmissão</label>
+            <input value={form.virtual_link} onChange={(e) => setForm({ ...form, virtual_link: e.target.value })} placeholder="https://..." className={inputClass} />
           </div>
         ) : (
           <>
             <div>
-              <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Endereço</label>
-              <input
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                placeholder="Rua, número, bairro, cidade"
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-              />
+              <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Endereço</label>
+              <input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Rua, número, bairro, cidade" className={inputClass} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Latitude</label>
-                <input
-                  value={form.latitude}
-                  onChange={(e) => setForm({ ...form, latitude: e.target.value })}
-                  placeholder="-23.55"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                />
+                <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Latitude</label>
+                <input value={form.latitude} onChange={(e) => setForm({ ...form, latitude: e.target.value })} placeholder="-23.55" className={inputClass} />
               </div>
               <div>
-                <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Longitude</label>
-                <input
-                  value={form.longitude}
-                  onChange={(e) => setForm({ ...form, longitude: e.target.value })}
-                  placeholder="-46.63"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-                />
+                <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Longitude</label>
+                <input value={form.longitude} onChange={(e) => setForm({ ...form, longitude: e.target.value })} placeholder="-46.63" className={inputClass} />
               </div>
             </div>
           </>
         )}
 
-        {/* Date/time */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Data de início *</label>
-            <input
-              type="date"
-              required
-              value={form.startDate}
-              onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            />
+            <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Data de início *</label>
+            <input type="date" required value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Horário de início *</label>
-            <input
-              type="time"
-              required
-              value={form.startTime}
-              onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            />
+            <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Horário de início *</label>
+            <input type="time" required value={form.startTime} onChange={(e) => setForm({ ...form, startTime: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Data de fim</label>
-            <input
-              type="date"
-              value={form.endDate}
-              onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            />
+            <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Data de fim</label>
+            <input type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} className={inputClass} />
           </div>
           <div>
-            <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Horário de fim</label>
-            <input
-              type="time"
-              value={form.endTime}
-              onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            />
+            <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Horário de fim</label>
+            <input type="time" value={form.endTime} onChange={(e) => setForm({ ...form, endTime: e.target.value })} className={inputClass} />
           </div>
         </div>
 
-        {/* Price */}
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Entrada</label>
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Entrada</label>
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, is_free: true })}
-              className={cn(
-                'flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all',
-                form.is_free ? 'border-emerald-500 bg-emerald-50 text-emerald-600' : 'border-slate-200 text-slate-600'
-              )}
-            >
+            <button type="button" onClick={() => setForm({ ...form, is_free: true })}
+              className={cn('flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all', form.is_free ? 'border-emerald-500 bg-emerald-500/15 text-emerald-400' : 'border-[var(--border)] text-[var(--text-secondary)]')}>
               Gratuito
             </button>
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, is_free: false })}
-              className={cn(
-                'flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all',
-                !form.is_free ? 'border-amber-500 bg-amber-50 text-amber-600' : 'border-slate-200 text-slate-600'
-              )}
-            >
+            <button type="button" onClick={() => setForm({ ...form, is_free: false })}
+              className={cn('flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all', !form.is_free ? 'border-amber-500 bg-amber-500/15 text-amber-400' : 'border-[var(--border)] text-[var(--text-secondary)]')}>
               Pago
             </button>
           </div>
         </div>
 
-        {/* Images */}
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Imagens (URLs)</label>
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Imagens (URLs)</label>
           <div className="flex gap-2">
-            <input
-              value={imageInput}
-              onChange={(e) => setImageInput(e.target.value)}
-              placeholder="https://..."
-              className="flex-1 rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            />
-            <button
-              type="button"
-              onClick={addImage}
-              className="flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
-            >
+            <input value={imageInput} onChange={(e) => setImageInput(e.target.value)} placeholder="https://..." className={inputClass} />
+            <button type="button" onClick={addImage} className="flex items-center gap-1 rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]">
               <ImagePlus size={16} /> Adicionar
             </button>
           </div>
@@ -349,11 +242,7 @@ export default function CreateView({ onCreated }: CreateViewProps) {
               {form.images.map((img, i) => (
                 <div key={i} className="relative">
                   <img src={img} alt="" className="h-16 w-16 rounded-lg object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(i)}
-                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-white shadow"
-                  >
+                  <button type="button" onClick={() => removeImage(i)} className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-white shadow">
                     <X size={12} />
                   </button>
                 </div>
@@ -363,26 +252,14 @@ export default function CreateView({ onCreated }: CreateViewProps) {
         </div>
 
         <div>
-          <label className="hc-text mb-1.5 block text-sm font-medium text-slate-700">Como participar</label>
-          <textarea
-            value={form.participation_info}
-            onChange={(e) => setForm({ ...form, participation_info: e.target.value })}
-            placeholder="Instruções para participar..."
-            rows={2}
-            className="w-full resize-none rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-          />
+          <label className="mb-1.5 block text-sm font-medium text-[var(--text-primary)]">Como participar</label>
+          <textarea value={form.participation_info} onChange={(e) => setForm({ ...form, participation_info: e.target.value })} placeholder="Instruções para participar..." rows={2} className={cn(inputClass, 'resize-none')} />
         </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting} className="w-full rounded-xl bg-[var(--accent)] py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-hover)] disabled:opacity-50">
           {submitting ? 'Enviando...' : 'Cadastrar atividade'}
         </button>
-        <p className="text-center text-xs text-slate-400">
-          Eventos novos passam por aprovação rápida para evitar spam.
-        </p>
+        <p className="text-center text-xs text-[var(--text-muted)]">Eventos novos passam por aprovação rápida para evitar spam.</p>
       </form>
     </div>
   );

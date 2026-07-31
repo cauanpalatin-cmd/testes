@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import type { CulturalEvent, UserLocation } from '@/types';
-import { CATEGORY_ICONS } from '@/types';
 import { formatDistance, eventDistance } from '@/lib/utils';
 
 interface MapViewProps {
@@ -12,45 +11,37 @@ interface MapViewProps {
 }
 
 const categoryColors: Record<string, string> = {
-  Música: '#ec4899',
-  Dança: '#f97316',
-  Teatro: '#8b5cf6',
-  Literatura: '#0ea5e9',
-  Gastronomia: '#f59e0b',
-  Artesanato: '#84cc16',
-  Tecnologia: '#06b6d4',
-  'Cultura Geek': '#a855f7',
-  Cinema: '#ef4444',
-  'Artes Visuais': '#14b8a6',
+  Música: '#f97316',
+  Dança: '#fb923c',
+  Teatro: '#fbbf24',
+  Literatura: '#facc15',
+  Gastronomia: '#f87171',
+  Artesanato: '#fde047',
+  Tecnologia: '#fca5a5',
+  'Cultura Geek': '#fb7185',
+  Cinema: '#f59e0b',
+  'Artes Visuais': '#fcd34d',
 };
 
-function createMarkerIcon(category: string, isHappening: boolean, isAi: boolean): L.DivIcon {
-  const color = categoryColors[category] ?? '#0ea5e9';
+function createMarkerIcon(category: string, isHappening: boolean): L.DivIcon {
+  const color = categoryColors[category] ?? '#f97316';
   const happeningClass = isHappening ? 'marker-happening' : '';
-  const aiBadge = isAi
-    ? '<div style="position:absolute;top:-6px;right:-6px;width:14px;height:14px;border-radius:50%;background:#0f172a;color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;border:1.5px solid #fff">AI</div>'
-    : '';
   return L.divIcon({
     className: 'custom-marker',
     html: `
-      <div style="position:relative;">
-        <div class="${happeningClass}" style="width:28px;height:28px;border-radius:50%;background:${color};border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;">
-          <span style="font-size:12px;">${CATEGORY_ICONS[category as keyof typeof CATEGORY_ICONS]?.[0] ?? '●'}</span>
-        </div>
-        ${aiBadge}
-      </div>
+      <div class="${happeningClass}" style="width:14px;height:14px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>
     `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
   });
 }
 
 function createUserIcon(): L.DivIcon {
   return L.divIcon({
     className: 'user-marker',
-    html: `<div style="width:18px;height:18px;border-radius:50%;background:#0ea5e9;border:3px solid #fff;box-shadow:0 0 0 4px rgba(14,165,233,0.3)"></div>`,
-    iconSize: [18, 18],
-    iconAnchor: [9, 9],
+    html: `<div style="position:relative;width:16px;height:16px;"><div style="position:absolute;inset:0;border-radius:50%;background:#f97316;border:2px solid #fff;box-shadow:0 0 0 6px rgba(249,115,22,0.25);"></div></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
   });
 }
 
@@ -69,15 +60,15 @@ export default function MapView({
     if (!containerRef.current || mapRef.current) return;
     const center: L.LatLngExpression = userLocation
       ? [userLocation.latitude, userLocation.longitude]
-      : [-23.55, -46.63];
+      : [-22.9056, -47.0608];
     const map = L.map(containerRef.current, {
       center,
       zoom: 13,
       zoomControl: true,
       attributionControl: true,
     });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
       maxZoom: 19,
     }).addTo(map);
     mapRef.current = map;
@@ -99,13 +90,13 @@ export default function MapView({
       const isHappening = new Date(event.start_time) <= new Date() &&
         (!event.end_time || new Date(event.end_time) >= new Date());
       const marker = L.marker([event.latitude, event.longitude], {
-        icon: createMarkerIcon(event.category, isHappening, event.is_ai_generated),
+        icon: createMarkerIcon(event.category, isHappening),
       });
       const dist = userLocation ? eventDistance(event, userLocation) : null;
       marker.bindPopup(`
-        <div style="min-width:180px;padding:4px">
-          <div style="font-weight:600;font-size:14px;margin-bottom:2px">${event.title}</div>
-          <div style="font-size:12px;color:#64748b">${event.category}${dist ? ` • ${formatDistance(dist)}` : ''}</div>
+        <div style="min-width:160px;padding:4px 2px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px">${event.title}</div>
+          <div style="font-size:11px;color:#9a9bb8">${event.category}${dist ? ` • ${formatDistance(dist)}` : ''}</div>
         </div>
       `);
       marker.on('click', () => onSelectEvent(event.id));

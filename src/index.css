@@ -33,12 +33,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-html.hc-mode { filter: contrast(1.5); }
+/* High contrast mode */
+html.hc-mode {
+  filter: contrast(1.5);
+}
 
+/* Colorblind simulation filters */
 html.cb-protanopia .cb-adjust { filter: url(#cb-protanopia-filter); }
 html.cb-deuteranopia .cb-adjust { filter: url(#cb-deuteranopia-filter); }
 html.cb-tritanopia .cb-adjust { filter: url(#cb-tritanopia-filter); }
 
+/* Leaflet container */
 .leaflet-container {
   width: 100%;
   height: 100%;
@@ -55,8 +60,13 @@ html.cb-tritanopia .cb-adjust { filter: url(#cb-tritanopia-filter); }
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
-.leaflet-popup-tip { background: var(--bg-card); }
-.leaflet-popup-close-button { color: var(--text-secondary) !important; }
+.leaflet-popup-tip {
+  background: var(--bg-card);
+}
+
+.leaflet-popup-close-button {
+  color: var(--text-secondary) !important;
+}
 
 .leaflet-control-zoom a {
   background: var(--bg-card) !important;
@@ -64,25 +74,37 @@ html.cb-tritanopia .cb-adjust { filter: url(#cb-tritanopia-filter); }
   color: var(--text-primary) !important;
 }
 
-.leaflet-control-zoom a:hover { background: var(--bg-hover) !important; }
-
-.leaflet-control-attribution {
-  background: rgba(28,29,46,0.85) !important;
-  color: var(--text-muted) !important;
+.leaflet-control-zoom a:hover {
+  background: var(--bg-hover) !important;
 }
 
-.leaflet-control-attribution a { color: var(--text-secondary) !important; }
-
+/* Custom scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #3e4060; }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideInRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes slideInLeft { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
 @keyframes pulse-ring {
   0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.6); }
   70% { box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
@@ -95,7 +117,9 @@ html.cb-tritanopia .cb-adjust { filter: url(#cb-tritanopia-filter); }
 .animate-slide-in-left { animation: slideInLeft 0.25s ease-out; }
 .animate-scale-in { animation: scaleIn 0.2s ease-out; }
 .animate-pulse-ring { animation: pulse-ring 2s infinite; }
+
 .marker-happening { animation: pulse-ring 2s infinite; }
 
+/* Hide scrollbar utility */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

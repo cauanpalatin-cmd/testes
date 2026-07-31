@@ -39,6 +39,7 @@ function AppContent() {
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const [listOpen, setListOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [participations, setParticipations] = useState<Participation[]>([]);
@@ -148,8 +149,8 @@ function AppContent() {
 
   // Filtered events
   const filteredEvents = useMemo(
-    () => applyFilters(events, filters, userLocation),
-    [events, filters, userLocation]
+    () => applyFilters(events, filters, userLocation, searchQuery),
+    [events, filters, userLocation, searchQuery]
   );
 
   const activeFilterCount = useMemo(() => {
@@ -244,13 +245,15 @@ function AppContent() {
   }, [ratings, selectedEventId]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[var(--bg-primary)]">
       <Header
         view={view}
         setView={setView}
         onOpenFilters={() => setFilterPanelOpen(true)}
         onOpenAuth={() => setAuthOpen(true)}
         activeFilterCount={activeFilterCount}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
 
       <main>
@@ -286,8 +289,8 @@ function AppContent() {
         {view === 'create' && user && <CreateView onCreated={handleCreated} />}
         {view === 'create' && !user && (
           <div className="py-20 text-center">
-            <p className="text-slate-500">Você precisa entrar para criar eventos.</p>
-            <button onClick={() => setAuthOpen(true)} className="mt-3 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+            <p className="text-[var(--text-secondary)]">Você precisa entrar para criar eventos.</p>
+            <button onClick={() => setAuthOpen(true)} className="mt-3 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white">
               Entrar
             </button>
           </div>
@@ -311,8 +314,8 @@ function AppContent() {
         )}
         {view === 'favorites' && !user && (
           <div className="py-20 text-center">
-            <p className="text-slate-500">Entre para ver seus favoritos e histórico.</p>
-            <button onClick={() => setAuthOpen(true)} className="mt-3 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+            <p className="text-[var(--text-secondary)]">Entre para ver seus salvos e histórico.</p>
+            <button onClick={() => setAuthOpen(true)} className="mt-3 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white">
               Entrar
             </button>
           </div>
@@ -329,8 +332,8 @@ function AppContent() {
         )}
         {view === 'calendar' && !user && (
           <div className="py-20 text-center">
-            <p className="text-slate-500">Entre para acessar sua agenda.</p>
-            <button onClick={() => setAuthOpen(true)} className="mt-3 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+            <p className="text-[var(--text-secondary)]">Entre para acessar sua agenda.</p>
+            <button onClick={() => setAuthOpen(true)} className="mt-3 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white">
               Entrar
             </button>
           </div>

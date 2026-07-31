@@ -1,4 +1,4 @@
-import { X, SlidersHorizontal } from 'lucide-react';
+import { X, SlidersHorizontal, Radio } from 'lucide-react';
 import type { CulturalEvent } from '@/types';
 import { CATEGORIES, CATEGORY_ICONS } from '@/types';
 import * as Icons from 'lucide-react';
@@ -31,10 +31,16 @@ export const DEFAULT_FILTERS: FilterState = {
 export function applyFilters(
   events: CulturalEvent[],
   filters: FilterState,
-  userLoc: { latitude: number; longitude: number } | null
+  userLoc: { latitude: number; longitude: number } | null,
+  searchQuery: string
 ): CulturalEvent[] {
+  const q = searchQuery.trim().toLowerCase();
   return events.filter((e) => {
     if (e.status !== 'active') return false;
+    if (q) {
+      const haystack = `${e.title} ${e.description} ${e.category} ${e.address ?? ''} ${e.organizer_name}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
     if (filters.categories.length > 0 && !filters.categories.includes(e.category)) return false;
     if (filters.priceFilter === 'free' && !e.is_free) return false;
     if (filters.priceFilter === 'paid' && e.is_free) return false;
@@ -79,52 +85,43 @@ export default function FilterPanel({
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm animate-fade-in" onClick={onClose} />
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       )}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 flex h-full w-80 max-w-[85vw] flex-col bg-white shadow-2xl transition-transform duration-300',
+          'fixed left-0 top-0 z-40 flex h-full w-80 max-w-[85vw] flex-col border-r border-[var(--border)] bg-[var(--bg-secondary)] transition-transform duration-300',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center justify-between border-b border-slate-100 p-4">
+        <div className="flex items-center justify-between border-b border-[var(--border)] p-4">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal size={20} className="text-slate-700" />
-            <h2 className="hc-text font-semibold text-slate-900">Filtros</h2>
+            <SlidersHorizontal size={20} className="text-[var(--accent)]" />
+            <h2 className="font-semibold text-[var(--text-primary)]">Filtros</h2>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]">
             <X size={20} />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
-          {/* Happening now */}
-          <label className="flex cursor-pointer items-center justify-between rounded-xl bg-emerald-50 p-3">
-            <span className="flex items-center gap-2 text-sm font-medium text-emerald-700">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+          <label className="flex cursor-pointer items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3">
+            <span className="flex items-center gap-2 text-sm font-medium text-emerald-400">
+              <Radio size={16} className="animate-pulse" />
               Acontecendo agora
             </span>
             <button
               onClick={() => setFilters({ ...filters, happeningNow: !filters.happeningNow })}
               className={cn(
                 'relative h-6 w-11 rounded-full transition-colors',
-                filters.happeningNow ? 'bg-emerald-500' : 'bg-slate-200'
+                filters.happeningNow ? 'bg-emerald-500' : 'bg-[var(--border)]'
               )}
             >
-              <span
-                className={cn(
-                  'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform',
-                  filters.happeningNow ? 'translate-x-5' : 'translate-x-0.5'
-                )}
-              />
+              <span className={cn('absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform', filters.happeningNow ? 'translate-x-5' : 'translate-x-0.5')} />
             </button>
           </label>
 
-          {/* Categories */}
           <div className="mt-5">
-            <h3 className="hc-text mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Categorias
-            </h3>
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Categorias</h3>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((cat) => {
                 const Icon = Icons[CATEGORY_ICONS[cat] as keyof typeof Icons] as Icons.LucideIcon | undefined;
@@ -136,8 +133,8 @@ export default function FilterPanel({
                     className={cn(
                       'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all',
                       active
-                        ? 'border-sky-500 bg-sky-50 text-sky-600'
-                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                        ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]'
+                        : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-muted)]'
                     )}
                   >
                     {Icon && <Icon size={13} />}
@@ -148,11 +145,8 @@ export default function FilterPanel({
             </div>
           </div>
 
-          {/* Distance */}
           <div className="mt-5">
-            <h3 className="hc-text mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Distância máxima
-            </h3>
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Distância máxima</h3>
             <div className="flex flex-wrap gap-2">
               {[
                 { label: 'Qualquer', value: null },
@@ -167,8 +161,8 @@ export default function FilterPanel({
                   className={cn(
                     'rounded-lg border px-3 py-1.5 text-xs font-medium transition-all',
                     filters.maxDistance === opt.value
-                      ? 'border-sky-500 bg-sky-50 text-sky-600'
-                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                      ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]'
+                      : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-muted)]'
                   )}
                 >
                   {opt.label}
@@ -177,11 +171,8 @@ export default function FilterPanel({
             </div>
           </div>
 
-          {/* Price */}
           <div className="mt-5">
-            <h3 className="hc-text mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Preço
-            </h3>
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Preço</h3>
             <div className="flex gap-2">
               {[
                 { label: 'Todos', value: 'all' },
@@ -194,8 +185,8 @@ export default function FilterPanel({
                   className={cn(
                     'flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition-all',
                     filters.priceFilter === opt.value
-                      ? 'border-sky-500 bg-sky-50 text-sky-600'
-                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                      ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]'
+                      : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-muted)]'
                   )}
                 >
                   {opt.label}
@@ -204,11 +195,8 @@ export default function FilterPanel({
             </div>
           </div>
 
-          {/* Mode */}
           <div className="mt-5">
-            <h3 className="hc-text mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Modalidade
-            </h3>
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Modalidade</h3>
             <div className="flex gap-2">
               {[
                 { label: 'Todos', value: 'all' },
@@ -221,8 +209,8 @@ export default function FilterPanel({
                   className={cn(
                     'flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition-all',
                     filters.modeFilter === opt.value
-                      ? 'border-sky-500 bg-sky-50 text-sky-600'
-                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                      ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]'
+                      : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-muted)]'
                   )}
                 >
                   {opt.label}
@@ -232,14 +220,14 @@ export default function FilterPanel({
           </div>
         </div>
 
-        <div className="border-t border-slate-100 p-4">
-          <div className="mb-3 text-center text-xs text-slate-500">
-            <span className="font-semibold text-slate-700">{eventCount}</span>{' '}
-            {eventCount === 1 ? 'atividade encontrada' : 'atividades encontradas'}
+        <div className="border-t border-[var(--border)] p-4">
+          <div className="mb-3 text-center text-xs text-[var(--text-secondary)]">
+            <span className="font-semibold text-[var(--text-primary)]">{eventCount}</span>{' '}
+            {eventCount === 1 ? 'evento encontrado' : 'eventos encontrados'}
           </div>
           <button
             onClick={() => setFilters(DEFAULT_FILTERS)}
-            className="w-full rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+            className="w-full rounded-lg border border-[var(--border)] py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
           >
             Limpar filtros
           </button>

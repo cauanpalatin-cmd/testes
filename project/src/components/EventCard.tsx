@@ -1,21 +1,10 @@
-import {
-  Heart,
-  CheckCircle2,
-  Bell,
-  Navigation,
-  MapPin,
-  Clock,
-  Globe,
-  Sparkles,
-  Star,
-} from 'lucide-react';
+import { Heart, CircleCheck as CheckCircle2, Bell, Navigation, MapPin, Clock, Globe, Sparkles, Star } from 'lucide-react';
 import type { CulturalEvent, UserLocation } from '@/types';
 import {
   formatDistance,
   formatDate,
   formatTime,
   eventDistance,
-  estimateTravelTime,
   isHappeningNow,
   cn,
 } from '@/lib/utils';
@@ -59,8 +48,8 @@ export default function EventCard({
   return (
     <article
       className={cn(
-        'hc-card group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md',
-        happening && 'ring-2 ring-emerald-400'
+        'group relative flex flex-col overflow-hidden rounded-xl border bg-[var(--bg-card)] transition-all hover:border-[var(--accent)]/40 hover:bg-[var(--bg-hover)]',
+        happening ? 'border-emerald-500/40' : 'border-[var(--border)]'
       )}
     >
       {img && (
@@ -71,121 +60,115 @@ export default function EventCard({
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           {happening && (
-            <span className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white shadow">
+            <span className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-              Acontecendo agora
+              Agora
             </span>
           )}
           {event.is_ai_generated && (
-            <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-slate-900/80 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+            <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
               <Sparkles size={12} /> IA
             </span>
           )}
-          <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur">
+          <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur">
             {CategoryIcon && <CategoryIcon size={12} />}
             {event.category}
           </span>
         </button>
       )}
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-3.5">
         <button onClick={onSelect} className="text-left">
-          <h3 className="hc-text line-clamp-1 font-semibold text-slate-900 group-hover:text-sky-600">
+          <h3 className="line-clamp-1 font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)]">
             {event.title}
           </h3>
         </button>
-        <p className="hc-muted mt-1 line-clamp-2 text-sm text-slate-500">{event.description}</p>
+        <p className="mt-1 line-clamp-2 text-sm text-[var(--text-secondary)]">{event.description}</p>
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-muted)]">
           <span className="flex items-center gap-1">
-            <Clock size={13} />
+            <Clock size={12} />
             {formatDate(event.start_time)} • {formatTime(event.start_time)}
           </span>
           {event.is_virtual ? (
-            <span className="flex items-center gap-1 text-sky-600">
-              <Globe size={13} /> Virtual
+            <span className="flex items-center gap-1 text-sky-400">
+              <Globe size={12} /> Virtual
             </span>
           ) : (
             <span className="flex items-center gap-1">
-              <MapPin size={13} />
+              <MapPin size={12} />
               {dist != null ? formatDistance(dist) : event.address ?? '—'}
             </span>
           )}
-          {dist != null && !event.is_virtual && (
-            <span className="hidden items-center gap-1 sm:flex">
-              <Navigation size={13} />
-              {estimateTravelTime(dist)}
-            </span>
-          )}
           {event.is_free ? (
-            <span className="font-semibold text-emerald-600">Gratuito</span>
+            <span className="font-semibold text-emerald-400">Gratuito</span>
           ) : (
-            <span className="font-semibold text-amber-600">Pago</span>
+            <span className="font-semibold text-amber-400">Pago</span>
           )}
           {avgRating != null && (
-            <span className="flex items-center gap-0.5 text-amber-500">
-              <Star size={13} fill="currentColor" /> {avgRating.toFixed(1)}
+            <span className="flex items-center gap-0.5 text-amber-400">
+              <Star size={12} fill="currentColor" /> {avgRating.toFixed(1)}
             </span>
           )}
         </div>
 
         {!compact && (
-          <p className="mt-2 text-xs text-slate-400">
-            Por <span className="font-medium text-slate-600">{event.organizer_name}</span>
+          <p className="mt-2 text-xs text-[var(--text-muted)]">
+            Por <span className="font-medium text-[var(--text-secondary)]">{event.organizer_name}</span>
           </p>
         )}
 
-        <div className="mt-3 flex items-center gap-1.5 border-t border-slate-100 pt-3">
+        <div className="mt-3 flex items-center gap-1.5 border-t border-[var(--border)] pt-3">
           <button
             onClick={onToggleFavorite}
             title="Favoritar"
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-lg transition-colors',
+              'flex h-8 w-8 items-center justify-center rounded-lg transition-colors',
               isFavorite
-                ? 'bg-rose-50 text-rose-500 hover:bg-rose-100'
-                : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
+                ? 'bg-rose-500/15 text-rose-400 hover:bg-rose-500/25'
+                : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
             )}
           >
-            <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} />
+            <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
           </button>
           <button
             onClick={onToggleParticipated}
             title="Já participei"
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-lg transition-colors',
+              'flex h-8 w-8 items-center justify-center rounded-lg transition-colors',
               hasParticipated
-                ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
-                : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
+                ? 'bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25'
+                : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
             )}
           >
-            <CheckCircle2 size={18} />
+            <CheckCircle2 size={16} />
           </button>
           <button
             onClick={onToggleReminder}
-            title="Ativar lembrete"
+            title="Lembrete"
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-lg transition-colors',
+              'flex h-8 w-8 items-center justify-center rounded-lg transition-colors',
               hasReminder
-                ? 'bg-sky-50 text-sky-600 hover:bg-sky-100'
-                : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
+                ? 'bg-[var(--accent)]/15 text-[var(--accent)] hover:bg-[var(--accent)]/25'
+                : 'text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'
             )}
           >
-            <Bell size={18} fill={hasReminder ? 'currentColor' : 'none'} />
+            <Bell size={16} fill={hasReminder ? 'currentColor' : 'none'} />
           </button>
           {!event.is_virtual && (
             <button
               onClick={onRoute}
               title="Traçar rota"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
             >
-              <Navigation size={18} />
+              <Navigation size={16} />
             </button>
           )}
           <button
             onClick={onSelect}
-            className="ml-auto rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-slate-700"
+            className="ml-auto rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--accent-hover)]"
           >
             Ver detalhes
           </button>
