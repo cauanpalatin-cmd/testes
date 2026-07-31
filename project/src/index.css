@@ -1,0 +1,102 @@
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-size-base: 16px;
+}
+
+html.font-sm { --font-size-base: 14px; }
+html.font-md { --font-size-base: 16px; }
+html.font-lg { --font-size-base: 18px; }
+
+html {
+  font-size: var(--font-size-base);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* High contrast mode */
+html.hc-mode {
+  filter: contrast(1.5);
+}
+html.hc-mode body {
+  background-color: #000;
+  color: #fff;
+}
+html.hc-mode .hc-card {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+html.hc-mode .hc-text { color: #fff !important; }
+html.hc-mode .hc-muted { color: #ffff00 !important; }
+
+/* Colorblind simulation filters */
+html.cb-protanopia .cb-adjust { filter: url(#cb-protanopia-filter); }
+html.cb-deuteranopia .cb-adjust { filter: url(#cb-deuteranopia-filter); }
+html.cb-tritanopia .cb-adjust { filter: url(#cb-tritanopia-filter); }
+
+/* Leaflet container */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #e2e8f0;
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(14, 165, 233, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+}
+
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+.animate-slide-up { animation: slideUp 0.4s ease-out; }
+.animate-slide-in-right { animation: slideInRight 0.3s ease-out; }
+.animate-scale-in { animation: scaleIn 0.2s ease-out; }
+.animate-pulse-ring { animation: pulse-ring 2s infinite; }
+
+/* Custom marker pulse for happening-now events */
+.marker-happening {
+  animation: pulse-ring 2s infinite;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
